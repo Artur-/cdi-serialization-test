@@ -1,41 +1,63 @@
 package org.vaadin.artur;
 
-import javax.servlet.annotation.WebServlet;
+import javax.inject.Inject;
 
 import com.vaadin.annotations.Theme;
-import com.vaadin.annotations.VaadinServletConfiguration;
+import com.vaadin.cdi.CDIUI;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
+@CDIUI("")
+@Theme("valo")
 public class MyUI extends UI {
+
+    @Inject
+    private SessionScopedBean sessionScopedBean;
+
+    @Inject
+    private UIScopedBean uiScopedBean;
+
+    private VerticalLayout layout;
+
+    private TextField sessionField;
+    private TextField uiField;
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-        final VerticalLayout layout = new VerticalLayout();
-        
-        final TextField name = new TextField();
-        name.setCaption("Type your name here:");
+        layout = new VerticalLayout();
 
-        Button button = new Button("Click Me");
-        button.addClickListener( e -> {
-            layout.addComponent(new Label("Thanks " + name.getValue() 
-                    + ", it works!"));
+        sessionField = new TextField();
+        sessionField.setCaption("SessionScoped: ");
+        sessionField.addValueChangeListener(e -> {
+            sessionScopedBean.setString(sessionField.getValue());
         });
-        
-        layout.addComponents(name, button);
+
+        uiField = new TextField();
+        uiField.setCaption("uiScoped: ");
+        uiField.addValueChangeListener(e -> {
+            uiScopedBean.setString(uiField.getValue());
+        });
+
+        updateFromBean();
+
+        Button button = new Button("Update from beans");
+        button.addClickListener(e -> {
+            updateFromBean();
+        });
+
+        layout.addComponents(sessionField, uiField, button);
         layout.setMargin(true);
         layout.setSpacing(true);
-        
+
         setContent(layout);
     }
 
-    @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
-    @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
-    public static class MyUIServlet extends VaadinServlet {
+    private void updateFromBean() {
+        sessionField.setValue(sessionScopedBean.getString());
+        uiField.setValue(uiScopedBean.getString());
     }
+
 }
