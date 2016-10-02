@@ -80,12 +80,12 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.openejb.maven</groupId>
+                <groupId>org.apache.tomee.maven</groupId>
                 <artifactId>tomee-maven-plugin</artifactId>
-                <version>1.7.1</version>
+                <version>7.0.1</version>
                 <configuration>
-                    <tomeeVersion>1.7.1</tomeeVersion>
-                    <tomeeClassifier>plus</tomeeClassifier>
+                    <tomeeVersion>7.0.1</tomeeVersion>
+                    <tomeeClassifier>webprofile</tomeeClassifier>
                 </configuration>
             </plugin>
         </plugins>
